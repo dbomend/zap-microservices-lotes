@@ -1,0 +1,4 @@
+pipeline_template: pipeline/maven11/jenkinsfile
+dockerBaseImage: openjdk:11.0.10-jre-slim
+k8s:
+  namespace: l2-microservices

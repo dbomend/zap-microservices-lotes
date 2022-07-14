@@ -1,0 +1,75 @@
+## Configuração Homologação ##
+
+server:
+  name: gateway
+  host: zap-microservices-discovery-svc
+  port: 80
+  compression:
+    ## Enable response compression
+    enabled: false
+    ## The comma-separated list of mime types that should be compressed
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    ## Compress the response only if the response size is at least 1KB
+    min-response-size: 1024
+
+eureka:
+  instance:
+    prefer-ip-address: false
+    statusPageUrlPath: http://${server.host}:${server.port}/actuator/info
+    healthCheckUrlPath: http://${server.host}:${server.port}/actuator/health
+  name: eureka
+  host: zap-microservices-discovery-svc
+  port: 80
+  client:
+    enabled: false
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${eureka.host}:${eureka.port}/${eureka.name}/
+  server:
+    wait-time-in-ms-when-sync-empty: 3000
+  healthcheck:
+    enable: true
+
+database:
+  host: ${SM_POSTGRESQL_HOST}
+  port: ${SM_POSTGRESQL_PORT}
+  name: zap_webservices
+  username: ${SM_POSTGRESQL_USER}
+  password: ${SM_POSTGRESQL_PASS}
+
+spring:
+  application:
+    name: zap-lotes
+  datasource:
+    url: jdbc:postgresql://${database.host}:${database.port}/${database.name}?ApplicationName=${spring.application.name}
+    username: ${database.username}
+    password: ${database.password}
+
+zap-microservices:
+  base-url: http://apigateway.prd.contazap.com/gateway
+  authentication:
+    username: zapinternal
+  zap-auth:
+    uri: zap-microservices-auth-svc.l2-microservices.svc.cluster.local
+
+security:
+  jwt-key: ${SM_JWT_KEY}
+  username: ${SM_JWT_USER}
+  password: ${SM_JWT_PASS}
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 60000
+        readTimeout: 60000
+
+logging:
+  level:
+    root: INFO
+    com.zap.contadigital: TRACE
+    com.sample.feign.demofeigncustomconfig: INFO
+    org.springframework.web.client: INFO
+    org.springframework.security.oauth2: INFO
+    com.zap.contadigital.contas.client: DEBUG
